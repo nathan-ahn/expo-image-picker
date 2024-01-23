@@ -280,6 +280,11 @@ export type ImagePickerAsset = {
    * The MIME type of the selected asset or `null` if could not be determined.
    */
   mimeType?: string;
+
+  /**
+   * Whether the asset is a live photo or not.
+   */
+  isLivePhoto?: boolean;
 };
 
 // @needsAudit

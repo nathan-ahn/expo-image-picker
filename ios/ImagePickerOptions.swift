@@ -148,11 +148,11 @@ internal enum MediaType: String, EnumArgument {
   func toArray() -> [String] {
     switch self {
     case .images:
-      return [kUTTypeImage as String]
+      return [kUTTypeImage as String, kUTTypeLivePhoto as String]
     case .videos:
       return [kUTTypeMovie as String]
     case .all:
-      return [kUTTypeImage as String, kUTTypeMovie as String]
+      return [kUTTypeImage as String, kUTTypeMovie as String, kUTTypeLivePhoto as String]
     }
   }
 
@@ -161,11 +161,11 @@ internal enum MediaType: String, EnumArgument {
     // TODO: (barthap) Maybe add support for live photos
     switch self {
     case .images:
-      return .images
+        return .any(of: [.images, .livePhotos])
     case .videos:
       return .videos
     case .all:
-      return .any(of: [.images, .videos])
+      return .any(of: [.images, .videos, .livePhotos])
     }
   }
 }
