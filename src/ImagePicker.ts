@@ -6,6 +6,8 @@ import {
   createPermissionHook,
   UnavailabilityError,
   CodedError,
+  EventEmitter,
+  NativeModulesProxy
 } from 'expo-modules-core';
 
 import ExponentImagePicker from './ExponentImagePicker';
@@ -172,6 +174,9 @@ export async function launchCameraAsync(
   return await ExponentImagePicker.launchCameraAsync(validateOptions(options));
 }
 
+const emitter = new EventEmitter(
+	ExponentImagePicker ?? NativeModulesProxy.ExponentImagePicker,
+);
 // @needsAudit
 /**
  * Display the system UI for choosing an image or a video from the phone's library.
@@ -194,7 +199,7 @@ export async function launchCameraAsync(
  * the selected media assets which have a form of [`ImagePickerAsset`](#imagepickerasset).
  */
 export async function launchImageLibraryAsync(
-  options?: ImagePickerOptions
+  {onSelection, ...options}: ImagePickerOptions={}
 ): Promise<ImagePickerResult> {
   if (!ExponentImagePicker.launchImageLibraryAsync) {
     throw new UnavailabilityError('ImagePicker', 'launchImageLibraryAsync');
@@ -206,7 +211,10 @@ export async function launchImageLibraryAsync(
         'to fix this warning.'
     );
   }
-  return await ExponentImagePicker.launchImageLibraryAsync(options ?? {});
+  const subscription = emitter.addListener("onSelection", onSelection ?? (() => {}))
+  const res = await ExponentImagePicker.launchImageLibraryAsync(options);
+  subscription.remove();
+  return res;
 }
 
 export * from './ImagePicker.types';

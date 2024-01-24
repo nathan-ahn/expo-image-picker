@@ -24,6 +24,7 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
   public func definition() -> ModuleDefinition {
     // TODO: (@bbarthec) change to "ExpoImagePicker" and propagate to other platforms
     Name("ExponentImagePicker")
+    Events("onSelection")
 
     OnCreate {
       self.appContext?.permissions?.register([
@@ -78,6 +79,12 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     case .get: permissions.getPermissionUsingRequesterClass(requesterClass, resolve: promise.resolver, reject: promise.legacyRejecter)
     case .ask: permissions.askForPermission(usingRequesterClass: requesterClass, resolve: promise.resolver, reject: promise.legacyRejecter)
     }
+  }
+    
+  func handleSelection(_ payload: OnSelectionPayload){
+    self.sendEvent("onSelection", [
+      "numSelected": payload.numSelected
+    ])
   }
 
   private func getMediaLibraryPermissionRequester(_ writeOnly: Bool) -> AnyClass {
@@ -185,6 +192,8 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     guard let fileSystem = self.appContext?.fileSystem else {
       return promise.reject(FileSystemModuleNotFoundException())
     }
+      
+    self.handleSelection(OnSelectionPayload(numSelected: selection.count))
 
     let mediaHandler = MediaHandler(fileSystem: fileSystem,
                                     options: options)

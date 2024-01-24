@@ -354,6 +354,13 @@ export type ImagePickerCancelledResult = ImagePickerCanceledResult;
  */
 export type ImagePickerMultipleResult = ImagePickerResult;
 
+export type OnSelectionEventPayload = {
+  /**
+   * Number of assets selected.
+   */
+  numSelected?: number;
+}
+
 // @needsAudit
 export type ImagePickerOptions = {
   /**
@@ -480,6 +487,10 @@ export type ImagePickerOptions = {
    * @platform ios 14+
    */
   preferredAssetRepresentationMode?: UIImagePickerPreferredAssetRepresentationMode;
+  /**
+   * Callback that is invoked when the selection is finalized.
+   */
+  onSelection?: (event: OnSelectionEventPayload) => void;
 };
 
 // @needsAudit

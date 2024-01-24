@@ -16,6 +16,10 @@ internal typealias SelectedMediaResult = Result<AssetInfo, Exception>
  */
 internal typealias ExifInfo = [String: Any]
 
+internal struct OnSelectionPayload: Record {
+    @Field var numSelected: Int = 0
+}
+
 /**
  Represents a picker response.
  */

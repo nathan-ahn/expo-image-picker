@@ -93,7 +93,7 @@ export declare function launchCameraAsync(options?: ImagePickerOptions): Promise
  * When the user canceled the action the `assets` is always `null`, otherwise it's an array of
  * the selected media assets which have a form of [`ImagePickerAsset`](#imagepickerasset).
  */
-export declare function launchImageLibraryAsync(options?: ImagePickerOptions): Promise<ImagePickerResult>;
+export declare function launchImageLibraryAsync({ onSelection, ...options }?: ImagePickerOptions): Promise<ImagePickerResult>;
 export * from './ImagePicker.types';
 export { PermissionStatus, PermissionExpiration, PermissionHookOptions, PermissionResponse };
 //# sourceMappingURL=ImagePicker.d.ts.map

@@ -1,4 +1,4 @@
-import { PermissionStatus, createPermissionHook, UnavailabilityError, CodedError, } from 'expo-modules-core';
+import { PermissionStatus, createPermissionHook, UnavailabilityError, CodedError, EventEmitter, NativeModulesProxy } from 'expo-modules-core';
 import ExponentImagePicker from './ExponentImagePicker';
 function validateOptions(options) {
     const { aspect, quality, videoMaxDuration } = options;
@@ -121,6 +121,7 @@ export async function launchCameraAsync(options = {}) {
     }
     return await ExponentImagePicker.launchCameraAsync(validateOptions(options));
 }
+const emitter = new EventEmitter(ExponentImagePicker ?? NativeModulesProxy.ExponentImagePicker);
 // @needsAudit
 /**
  * Display the system UI for choosing an image or a video from the phone's library.
@@ -142,7 +143,7 @@ export async function launchCameraAsync(options = {}) {
  * When the user canceled the action the `assets` is always `null`, otherwise it's an array of
  * the selected media assets which have a form of [`ImagePickerAsset`](#imagepickerasset).
  */
-export async function launchImageLibraryAsync(options) {
+export async function launchImageLibraryAsync({ onSelection, ...options } = {}) {
     if (!ExponentImagePicker.launchImageLibraryAsync) {
         throw new UnavailabilityError('ImagePicker', 'launchImageLibraryAsync');
     }
@@ -151,7 +152,10 @@ export async function launchImageLibraryAsync(options) {
             "Disable either 'allowsEditing' or 'allowsMultipleSelection' in 'launchImageLibraryAsync' " +
             'to fix this warning.');
     }
-    return await ExponentImagePicker.launchImageLibraryAsync(options ?? {});
+    const subscription = emitter.addListener("onSelection", onSelection ?? (() => { }));
+    const res = await ExponentImagePicker.launchImageLibraryAsync(options);
+    subscription.remove();
+    return res;
 }
 export * from './ImagePicker.types';
 export { PermissionStatus };

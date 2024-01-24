@@ -330,6 +330,12 @@ export type ImagePickerCancelledResult = ImagePickerCanceledResult;
  * @deprecated `ImagePickerMultipleResult` has been deprecated in favor of `ImagePickerResult`.
  */
 export type ImagePickerMultipleResult = ImagePickerResult;
+export type OnSelectionEventPayload = {
+    /**
+     * Number of assets selected.
+     */
+    numSelected?: number;
+};
 export type ImagePickerOptions = {
     /**
      * Whether to show a UI to edit the image after it is picked. On Android the user can crop and
@@ -455,6 +461,10 @@ export type ImagePickerOptions = {
      * @platform ios 14+
      */
     preferredAssetRepresentationMode?: UIImagePickerPreferredAssetRepresentationMode;
+    /**
+     * Callback that is invoked when the selection is finalized.
+     */
+    onSelection?: (event: OnSelectionEventPayload) => void;
 };
 export type OpenFileBrowserOptions = {
     /**
