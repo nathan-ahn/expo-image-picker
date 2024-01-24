@@ -227,7 +227,7 @@ export type ImagePickerAsset = {
     /**
      * The type of the asset.
      */
-    type?: 'image' | 'video';
+    type?: 'image' | 'video' | 'livePhoto';
     /**
      * Preferred filename to use when saving this item. This might be `null` when the name is unavailable
      * or user gave limited permission to access the media library.
@@ -265,6 +265,16 @@ export type ImagePickerAsset = {
      * The MIME type of the selected asset or `null` if could not be determined.
      */
     mimeType?: string;
+    /**
+     * Image uri for a live photo, if the asset is a live photo.
+     *
+     * This is a different file from uri since live photos copy to a separate directory, as well as to maintain the same behavior as the official `expo-image-picker`.
+     */
+    livePhotoImageUri?: string;
+    /**
+     * Video uri for a live photo, if the asset is a live photo.
+     */
+    livePhotoVideoUri?: string;
 };
 export type ImagePickerErrorResult = {
     /**
