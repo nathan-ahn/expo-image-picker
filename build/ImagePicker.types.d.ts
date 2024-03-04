@@ -465,6 +465,18 @@ export type ImagePickerOptions = {
      * Callback that is invoked when the selection is finalized.
      */
     onSelection?: (event: OnSelectionEventPayload) => void;
+    /**
+     * Whether to allow the response to be an HEIC image. If `false`, the response will be a JPEG compressed using the `quality` option.
+     *
+     * @default false
+     */
+    allowsHeif?: boolean;
+    /**
+     * Whether to prefer the original data when possible. This means the raw image data will be returned for PNG, HEIC, and JPEG (if `quality` is set to `1`).
+     *
+     * @default false
+     */
+    prefersOriginal?: boolean;
 };
 export type OpenFileBrowserOptions = {
     /**
