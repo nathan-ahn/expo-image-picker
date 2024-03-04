@@ -491,6 +491,13 @@ export type ImagePickerOptions = {
    * Callback that is invoked when the selection is finalized.
    */
   onSelection?: (event: OnSelectionEventPayload) => void;
+
+  /**
+   * Whether to allow the response to be an HEIC image. If `false`, the response will be a JPEG compressed using the `quality` option.
+   * 
+   * @default false
+   */
+  allowsHeif?: boolean;
 };
 
 // @needsAudit

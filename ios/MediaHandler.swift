@@ -131,7 +131,7 @@ internal struct MediaHandler {
       do {
         guard error == nil,
               let rawData = rawData,
-              let image = try? UIImage(data: rawData) else {
+              let image = UIImage(data: rawData) else {
           return completion(index, .failure(FailedToReadImageException().causedBy(error)))
         }
 
@@ -202,7 +202,7 @@ internal struct MediaHandler {
           do {
               guard error == nil,
                     let rawData = rawData,
-                    let image = try? UIImage(data: rawData) else {
+                    let image = UIImage(data: rawData) else {
                   return completion(index, .failure(FailedToReadImageException().causedBy(error)))
               }
               
@@ -510,6 +510,22 @@ private struct ImageUtils {
                                        compressionQuality: options.quality,
                                        initialMetadata: nil)
       return (gifData, ".gif")
+    case UTType.heic.identifier:
+        if #available(iOS 17.0, *), options.allowsHeif {
+        let data = image.heicData()
+        return (data, ".heic")
+      } else {
+        let data = image.jpegData(compressionQuality: compressionQuality)
+        return (data, ".jpg")
+      }
+    case UTType.heif.identifier:
+        if #available(iOS 17.0, *), options.allowsHeif {
+        let data = image.heicData()
+        return (data, ".heic")
+      } else {
+        let data = image.jpegData(compressionQuality: compressionQuality)
+        return (data, ".jpg")
+      }
     default:
       let data = image.jpegData(compressionQuality: compressionQuality)
       return (data, ".jpg")
