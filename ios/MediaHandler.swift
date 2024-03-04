@@ -213,7 +213,7 @@ internal struct MediaHandler {
               
               let mimeType = getMimeType(from: fileExtension)
               let targetUrl = try generateUrl(withFileExtension: fileExtension)
-              try ImageUtils.write(imageData: imageData, to: targetUrl)
+              try ImageUtils.write(imageData: rawData, to: targetUrl)
               let fileSize = getFileSize(from: targetUrl)
               let fileName = itemProvider.suggestedName.map { $0 + fileExtension }
               
@@ -511,7 +511,7 @@ private struct ImageUtils {
                                        initialMetadata: nil)
       return (gifData, ".gif")
     case UTType.heic.identifier:
-        if #available(iOS 17.0, *), options.allowsHeif {
+      if #available(iOS 17.0, *), options.allowsHeif {
         let data = image.heicData()
         return (data, ".heic")
       } else {
@@ -519,7 +519,7 @@ private struct ImageUtils {
         return (data, ".jpg")
       }
     case UTType.heif.identifier:
-        if #available(iOS 17.0, *), options.allowsHeif {
+      if #available(iOS 17.0, *), options.allowsHeif {
         let data = image.heicData()
         return (data, ".heic")
       } else {
