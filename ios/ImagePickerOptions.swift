@@ -58,6 +58,9 @@ internal struct ImagePickerOptions: Record {
     
   @Field
   var allowsHeif: Bool = false
+    
+  @Field
+  var prefersOriginal: Bool = false
 }
 
 internal enum PresentationStyle: String, EnumArgument {

@@ -213,7 +213,7 @@ internal struct MediaHandler {
               
               let mimeType = getMimeType(from: fileExtension)
               let targetUrl = try generateUrl(withFileExtension: fileExtension)
-              try ImageUtils.write(imageData: rawData, to: targetUrl)
+              try ImageUtils.write(imageData: imageData, to: targetUrl)
               let fileSize = getFileSize(from: targetUrl)
               let fileName = itemProvider.suggestedName.map { $0 + fileExtension }
               
@@ -503,6 +503,9 @@ private struct ImageUtils {
       }
       return (rawData, ".bmp")
     case UTType.png.identifier:
+      if options.prefersOriginal {
+        return (rawData, ".png")
+      }
       let data = image.pngData()
       return (data, ".png")
     case UTType.gif.identifier:
@@ -512,6 +515,9 @@ private struct ImageUtils {
       return (gifData, ".gif")
     case UTType.heic.identifier:
       if #available(iOS 17.0, *), options.allowsHeif {
+        if options.prefersOriginal {
+          return (rawData, ".heic")
+        }
         let data = image.heicData()
         return (data, ".heic")
       } else {
@@ -520,12 +526,21 @@ private struct ImageUtils {
       }
     case UTType.heif.identifier:
       if #available(iOS 17.0, *), options.allowsHeif {
+        if options.prefersOriginal {
+          return (rawData, ".heic")
+        }
         let data = image.heicData()
         return (data, ".heic")
       } else {
         let data = image.jpegData(compressionQuality: compressionQuality)
         return (data, ".jpg")
       }
+    case UTType.jpeg.identifier:
+      if compressionQuality == 1, options.prefersOriginal {
+        return (rawData, ".jpg")
+      }
+      let data = image.jpegData(compressionQuality: compressionQuality)
+      return (data, ".jpg")
     default:
       let data = image.jpegData(compressionQuality: compressionQuality)
       return (data, ".jpg")

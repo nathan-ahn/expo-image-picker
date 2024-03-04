@@ -498,6 +498,13 @@ export type ImagePickerOptions = {
    * @default false
    */
   allowsHeif?: boolean;
+
+  /**
+   * Whether to prefer the original data when possible. This means the raw image data will be returned for PNG, HEIC, and JPEG (if `quality` is set to `1`).
+   * 
+   * @default false
+   */
+  prefersOriginal?: boolean;
 };
 
 // @needsAudit
