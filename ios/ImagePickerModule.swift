@@ -125,6 +125,16 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     }
 
     picker.mediaTypes = options.mediaTypes.toArray()
+
+    if options.mediaTypes.requiresMicrophonePermission() && sourceType == .camera {
+      do {
+        try checkMicrophonePermissions()
+      } catch {
+        pickingContext.promise.reject(error)
+        return
+      }
+    }
+
     picker.videoExportPreset = options.videoExportPreset.toAVAssetExportPreset()
     picker.videoQuality = options.videoQuality.toQualityType()
     picker.videoMaximumDuration = options.videoMaxDuration
@@ -142,6 +152,12 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     presentPickerUI(picker, pickingContext: pickingContext)
   }
 
+  private func checkMicrophonePermissions() throws {
+    guard Bundle.main.object(forInfoDictionaryKey: "NSMicrophoneUsageDescription") != nil else {
+      throw MissingMicrophonePermissionException()
+    }
+  }
+
   @available(iOS 14, *)
   private func launchMultiSelectPicker(pickingContext: PickingContext) {
     var configuration = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
@@ -150,9 +166,7 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     // selection limit = 1 --> single selection, reflects the old picker behavior
     configuration.selectionLimit = options.allowsMultipleSelection ? options.selectionLimit : SINGLE_SELECTION
     configuration.filter = options.mediaTypes.toPickerFilter()
-    if #available(iOS 14, *) {
-      configuration.preferredAssetRepresentationMode = options.preferredAssetRepresentationMode.toAssetRepresentationMode()
-    }
+    configuration.preferredAssetRepresentationMode = options.preferredAssetRepresentationMode.toAssetRepresentationMode()
     if #available(iOS 15, *) {
       configuration.selection = options.orderedSelection ? .ordered : .default
     }
