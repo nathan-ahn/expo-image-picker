@@ -348,7 +348,29 @@ internal struct MediaHandler {
                            atIndex index: Int = -1,
                            completion: @escaping (Int, SelectedMediaResult) -> Void) {
     let itemProvider = selectedVideo.itemProvider
-    // TODO: Add support for fastCopy. Tried implementing but it causes crashes
+      
+    if(options.fastCopy){
+      itemProvider.loadDataRepresentation(forTypeIdentifier: UTType.movie.identifier) { rawData, error in
+          do {
+              guard error == nil, let rawData = rawData else {
+                  return completion(index, .failure(FailedToReadVideoException().causedBy(error)))
+              }
+              let targetUrl = try generateUrl(withFileExtension: nil)
+              try rawData.write(to: targetUrl)
+              let videoInfo = AssetInfo(assetId: selectedVideo.assetIdentifier,
+                                        type: "video",
+                                        uri: targetUrl.absoluteString
+              )
+              completion(index, .success(videoInfo))
+          } catch let exception as Exception {
+              return completion(index, .failure(exception))
+          } catch {
+              return completion(index, .failure(UnexpectedException(error)))
+          }
+      }
+      return
+    }
+      
     itemProvider.loadFileRepresentation(forTypeIdentifier: UTType.movie.identifier) { [self] url, error in
       do {
         guard error == nil,
