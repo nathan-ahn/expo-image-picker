@@ -211,66 +211,90 @@ internal struct MediaHandler {
                            completion: @escaping (Int, SelectedMediaResult) -> Void) {
     let itemProvider = selectedImage.itemProvider
       
-      
-      itemProvider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { rawData, error in
-          do {
-              guard error == nil,
-                    let rawData = rawData,
-                    let image = UIImage(data: rawData) else {
+    if(options.fastCopy){
+      itemProvider.loadObject(ofClass: PHLivePhoto.self) { livePhoto, error in
+          guard error == nil,
+                let livePhoto = livePhoto as? PHLivePhoto else {
+              return completion(index, .failure(FailedToReadImageException().causedBy(error)))
+          }
+          
+          LivePhotoHelper.extractResources(from: livePhoto, completion: { resources in
+              guard let imageURL = resources?.pairedImage, let videoURL = resources?.pairedVideo else {
                   return completion(index, .failure(FailedToReadImageException().causedBy(error)))
               }
               
-              let (imageData, fileExtension) = try ImageUtils.readDataAndFileExtension(image: image,
-                                                                                       rawData: rawData,
-                                                                                       itemProvider: itemProvider,
-                                                                                       options: self.options)
+              let imageInfo = AssetInfo(assetId: selectedImage.assetIdentifier,
+                                        type: "livePhoto",
+                                        uri: imageURL.absoluteString,
+                                        livePhotoImageUri: imageURL.absoluteString,
+                                        livePhotoVideoUri: videoURL.absoluteString
+              );
+              completion(index, .success(imageInfo))
+          })
+      }
+      return
+    }
+      
+      
+    itemProvider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { rawData, error in
+        do {
+          guard error == nil,
+                let rawData = rawData,
+                let image = UIImage(data: rawData) else {
+              return completion(index, .failure(FailedToReadImageException().causedBy(error)))
+          }
+          
+          let (imageData, fileExtension) = try ImageUtils.readDataAndFileExtension(image: image,
+                                                                                   rawData: rawData,
+                                                                                   itemProvider: itemProvider,
+                                                                                   options: self.options)
+          
+          let mimeType = getMimeType(from: fileExtension)
+          let targetUrl = try generateUrl(withFileExtension: fileExtension)
+          try ImageUtils.write(imageData: imageData, to: targetUrl)
+          let fileSize = getFileSize(from: targetUrl)
+          let fileName = itemProvider.suggestedName.map { $0 + fileExtension }
+          
+          // We need to get EXIF from original image data, as it is being lost in UIImage
+          let exif = ImageUtils.optionallyReadExifFrom(data: rawData, shouldReadExif: self.options.exif)
+          
+          let base64 = try ImageUtils.optionallyReadBase64From(imageData: imageData,
+                                                               orImageFileUrl: targetUrl,
+                                                               tryReadingFile: false,
+                                                               shouldReadBase64: self.options.base64)
+          
+          itemProvider.loadObject(ofClass: PHLivePhoto.self) { livePhoto, error in
+              guard error == nil,
+                    let livePhoto = livePhoto as? PHLivePhoto else {
+                  return completion(index, .failure(FailedToReadImageException().causedBy(error)))
+              }
               
-              let mimeType = getMimeType(from: fileExtension)
-              let targetUrl = try generateUrl(withFileExtension: fileExtension)
-              try ImageUtils.write(imageData: imageData, to: targetUrl)
-              let fileSize = getFileSize(from: targetUrl)
-              let fileName = itemProvider.suggestedName.map { $0 + fileExtension }
-              
-              // We need to get EXIF from original image data, as it is being lost in UIImage
-              let exif = ImageUtils.optionallyReadExifFrom(data: rawData, shouldReadExif: self.options.exif)
-              
-              let base64 = try ImageUtils.optionallyReadBase64From(imageData: imageData,
-                                                                   orImageFileUrl: targetUrl,
-                                                                   tryReadingFile: false,
-                                                                   shouldReadBase64: self.options.base64)
-              
-              itemProvider.loadObject(ofClass: PHLivePhoto.self) { livePhoto, error in
-                  guard error == nil,
-                        let livePhoto = livePhoto as? PHLivePhoto else {
+              LivePhotoHelper.extractResources(from: livePhoto, completion: { resources in
+                  guard let imageURL = resources?.pairedImage, let videoURL = resources?.pairedVideo else {
                       return completion(index, .failure(FailedToReadImageException().causedBy(error)))
                   }
                   
-                  LivePhotoHelper.extractResources(from: livePhoto, completion: { resources in
-                      guard let imageURL = resources?.pairedImage, let videoURL = resources?.pairedVideo else {
-                          return completion(index, .failure(FailedToReadImageException().causedBy(error)))
-                      }
-                      
-                      let imageInfo = AssetInfo(assetId: selectedImage.assetIdentifier,
-                                                type: "livePhoto",
-                                                uri: targetUrl.absoluteString,
-                                                width: image.size.width,
-                                                height: image.size.height,
-                                                fileName: fileName,
-                                                fileSize: fileSize,
-                                                mimeType: mimeType,
-                                                base64: base64,
-                                                exif: exif,
-                                                livePhotoImageUri: imageURL.absoluteString,
-                                                livePhotoVideoUri: videoURL.absoluteString
-                      );
-                      completion(index, .success(imageInfo))
-                  })
-              }
-          } catch let exception as Exception {
-              return completion(index, .failure(exception))
-          } catch {
-              return completion(index, .failure(UnexpectedException(error)))
+                  let imageInfo = AssetInfo(assetId: selectedImage.assetIdentifier,
+                                            type: "livePhoto",
+                                            uri: targetUrl.absoluteString,
+                                            width: image.size.width,
+                                            height: image.size.height,
+                                            fileName: fileName,
+                                            fileSize: fileSize,
+                                            mimeType: mimeType,
+                                            base64: base64,
+                                            exif: exif,
+                                            livePhotoImageUri: imageURL.absoluteString,
+                                            livePhotoVideoUri: videoURL.absoluteString
+                  );
+                  completion(index, .success(imageInfo))
+              })
           }
+        } catch let exception as Exception {
+          return completion(index, .failure(exception))
+        } catch {
+          return completion(index, .failure(UnexpectedException(error)))
+        }
       }
   }
     
