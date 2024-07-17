@@ -61,6 +61,12 @@ internal struct ImagePickerOptions: Record {
     
   @Field
   var prefersOriginal: Bool = false
+    
+  @Field
+  var fastCopy: Bool = false
+    
+  @Field
+  var prefersDirectory: String?
 }
 
 internal enum PresentationStyle: String, Enumerable {

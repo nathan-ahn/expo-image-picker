@@ -129,6 +129,20 @@ internal struct MediaHandler {
     let itemProvider = selectedImage.itemProvider
     itemProvider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { rawData, error in
       do {
+        if(options.fastCopy){
+          guard error == nil, let rawData = rawData else {
+            return completion(index, .failure(FailedToReadImageException().causedBy(error)))
+          }
+          let targetUrl = try generateUrl(withFileExtension: nil)
+          try rawData.write(to: targetUrl)
+          let imageInfo = AssetInfo(assetId: selectedImage.assetIdentifier,
+                                    type: "image",
+                                    uri: targetUrl.absoluteString
+          )
+          completion(index, .success(imageInfo))
+              
+          return
+        }
         guard error == nil,
               let rawData = rawData,
               let image = UIImage(data: rawData) else {
@@ -310,6 +324,7 @@ internal struct MediaHandler {
                            atIndex index: Int = -1,
                            completion: @escaping (Int, SelectedMediaResult) -> Void) {
     let itemProvider = selectedVideo.itemProvider
+    // TODO: Add support for fastCopy. Tried implementing but it causes crashes
     itemProvider.loadFileRepresentation(forTypeIdentifier: UTType.movie.identifier) { [self] url, error in
       do {
         guard error == nil,
@@ -370,7 +385,7 @@ internal struct MediaHandler {
     return components.joined(separator: ".")
   }
 
-  private func generateUrl(withFileExtension: String) throws -> URL {
+  private func generateUrl(withFileExtension: String?) throws -> URL {
     guard let fileSystem = self.fileSystem else {
       throw FileSystemModuleNotFoundException()
     }

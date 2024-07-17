@@ -222,11 +222,11 @@ export type ImagePickerAsset = {
     /**
      * Width of the image or video.
      */
-    width: number;
+    width?: number;
     /**
      * Height of the image or video.
      */
-    height: number;
+    height?: number;
     /**
      * The type of the asset.
      */
@@ -480,6 +480,12 @@ export type ImagePickerOptions = {
      * @default false
      */
     prefersOriginal?: boolean;
+    /**
+     * If enabled, ignores most other options and copies the original data directly.
+     *
+     * @default false
+     */
+    fastCopy?: boolean;
     legacy?: boolean;
 };
 export type OpenFileBrowserOptions = {
