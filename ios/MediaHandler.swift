@@ -218,7 +218,7 @@ internal struct MediaHandler {
               return completion(index, .failure(FailedToReadImageException().causedBy(error)))
           }
           
-          LivePhotoHelper.extractResources(from: livePhoto, to: generateDirectory(), completion: { resources in
+          LivePhotoHelper.extractResources(from: livePhoto, to: generateDirectory(initDirectory: true), completion: { resources in
               guard let imageURL = resources?.pairedImage, let videoURL = resources?.pairedVideo else {
                   return completion(index, .failure(FailedToReadImageException().causedBy(error)))
               }
@@ -269,7 +269,7 @@ internal struct MediaHandler {
                   return completion(index, .failure(FailedToReadImageException().causedBy(error)))
               }
               
-              LivePhotoHelper.extractResources(from: livePhoto, to: generateDirectory(), completion: { resources in
+              LivePhotoHelper.extractResources(from: livePhoto, to: generateDirectory(initDirectory: true), completion: { resources in
                   guard let imageURL = resources?.pairedImage, let videoURL = resources?.pairedVideo else {
                       return completion(index, .failure(FailedToReadImageException().causedBy(error)))
                   }
@@ -431,22 +431,36 @@ internal struct MediaHandler {
     return components.joined(separator: ".")
   }
 
-  private func generateDirectory() -> URL? {
+  private func generateDirectory(initDirectory: Bool=false) -> URL? {
       guard let fileSystem = self.fileSystem else {
           return nil
       }
-      if let prefersDirectory = options.prefersDirectory {
-        let directory = prefersDirectory.hasSuffix("/") ? String(prefersDirectory.dropLast()) : prefersDirectory
-        guard let url = URL(string: directory) else {
-            return nil
-        }
-        return url
+      do{
+          if let prefersDirectory = options.prefersDirectory {
+            let directory = prefersDirectory.hasSuffix("/") ? String(prefersDirectory.dropLast()) : prefersDirectory
+            guard let url = URL(string: directory) else {
+                return nil
+            }
+            if initDirectory {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            }
+            return url
+          }
+          else{
+            let directory =  fileSystem.cachesDirectory.appending(
+              fileSystem.cachesDirectory.hasSuffix("/") ? "" : "/" + "ImagePicker"
+            )
+            guard let url = URL(string: directory) else {
+                return nil
+            }
+            if initDirectory {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            }
+            return url
+          }
       }
-      else{
-        let directory =  fileSystem.cachesDirectory.appending(
-          fileSystem.cachesDirectory.hasSuffix("/") ? "" : "/" + "ImagePicker"
-        )
-        return URL(string: directory)
+      catch {
+          return nil
       }
   }
 
