@@ -19,9 +19,9 @@ class LivePhotoHelper {
 
     typealias LivePhotoResources = (pairedImage: URL, pairedVideo: URL)
     /// Returns the paired image and video for the given PHLivePhoto
-    public class func extractResources(from livePhoto: PHLivePhoto, completion: @escaping (LivePhotoResources?) -> Void) {
+    public class func extractResources(from livePhoto: PHLivePhoto, to directory: URL?, completion: @escaping (LivePhotoResources?) -> Void) {
         queue.async {
-            shared.extractResources(from: livePhoto, completion: completion)
+            shared.extractResources(from: livePhoto, to: directory, completion: completion)
         }
     }
 
@@ -154,8 +154,11 @@ class LivePhotoHelper {
         }
     }
     
-    private func extractResources(from livePhoto: PHLivePhoto, completion: @escaping (LivePhotoResources?) -> Void) {
-        if let cacheDirectory = cacheDirectory {
+    private func extractResources(from livePhoto: PHLivePhoto, to directory: URL?,  completion: @escaping (LivePhotoResources?) -> Void) {
+        if let directory = directory {
+            extractResources(from: livePhoto, to: directory, completion: completion)
+        }
+        else if let cacheDirectory = cacheDirectory {
             extractResources(from: livePhoto, to: cacheDirectory, completion: completion)
         }
     }

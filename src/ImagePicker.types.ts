@@ -516,6 +516,11 @@ export type ImagePickerOptions = {
    */
   fastCopy?: boolean;
 
+  /**
+   * The directory to prefer when copying assets.
+   */
+  prefersDirectory?: string
+
   /*
    * Uses the legacy image picker on Android. This will allow media to be selected from outside the users photo library.
    * @platform android

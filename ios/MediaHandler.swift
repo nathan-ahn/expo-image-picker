@@ -218,7 +218,7 @@ internal struct MediaHandler {
               return completion(index, .failure(FailedToReadImageException().causedBy(error)))
           }
           
-          LivePhotoHelper.extractResources(from: livePhoto, completion: { resources in
+          LivePhotoHelper.extractResources(from: livePhoto, to: generateDirectory(), completion: { resources in
               guard let imageURL = resources?.pairedImage, let videoURL = resources?.pairedVideo else {
                   return completion(index, .failure(FailedToReadImageException().causedBy(error)))
               }
@@ -269,7 +269,7 @@ internal struct MediaHandler {
                   return completion(index, .failure(FailedToReadImageException().causedBy(error)))
               }
               
-              LivePhotoHelper.extractResources(from: livePhoto, completion: { resources in
+              LivePhotoHelper.extractResources(from: livePhoto, to: generateDirectory(), completion: { resources in
                   guard let imageURL = resources?.pairedImage, let videoURL = resources?.pairedVideo else {
                       return completion(index, .failure(FailedToReadImageException().causedBy(error)))
                   }
@@ -431,14 +431,30 @@ internal struct MediaHandler {
     return components.joined(separator: ".")
   }
 
+  private func generateDirectory() -> URL? {
+      guard let fileSystem = self.fileSystem else {
+          return nil
+      }
+      if let prefersDirectory = options.prefersDirectory {
+        let directory = prefersDirectory.hasSuffix("/") ? String(prefersDirectory.dropLast()) : prefersDirectory
+        guard let url = URL(string: directory) else {
+            return nil
+        }
+        return url
+      }
+      else{
+        let directory =  fileSystem.cachesDirectory.appending(
+          fileSystem.cachesDirectory.hasSuffix("/") ? "" : "/" + "ImagePicker"
+        )
+        return URL(string: directory)
+      }
+  }
+
   private func generateUrl(withFileExtension: String?) throws -> URL {
-    guard let fileSystem = self.fileSystem else {
+    guard let fileSystem = self.fileSystem, let directory = generateDirectory() else {
       throw FileSystemModuleNotFoundException()
     }
-    let directory =  fileSystem.cachesDirectory.appending(
-      fileSystem.cachesDirectory.hasSuffix("/") ? "" : "/" + "ImagePicker"
-    )
-    let path = fileSystem.generatePath(inDirectory: directory, withExtension: withFileExtension)
+    let path = fileSystem.generatePath(inDirectory: directory.path, withExtension: withFileExtension)
     let url = URL(fileURLWithPath: path)
     return url
   }

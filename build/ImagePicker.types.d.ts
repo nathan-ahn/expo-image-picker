@@ -486,6 +486,10 @@ export type ImagePickerOptions = {
      * @default false
      */
     fastCopy?: boolean;
+    /**
+     * The directory to prefer when copying assets.
+     */
+    prefersDirectory?: string;
     legacy?: boolean;
 };
 export type OpenFileBrowserOptions = {
