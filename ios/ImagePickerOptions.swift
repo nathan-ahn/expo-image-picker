@@ -67,6 +67,9 @@ internal struct ImagePickerOptions: Record {
     
   @Field
   var prefersDirectory: String?
+    
+  @Field
+  var hasOnProcessed: Bool?
 }
 
 internal enum PresentationStyle: String, Enumerable {

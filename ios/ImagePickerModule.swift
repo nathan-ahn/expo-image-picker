@@ -25,6 +25,7 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     // TODO: (@bbarthec) change to "ExpoImagePicker" and propagate to other platforms
     Name("ExponentImagePicker")
     Events("onSelection")
+    Events("onProcessed")
 
     OnCreate {
       self.appContext?.permissions?.register([
@@ -81,10 +82,12 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     }
   }
     
-  func handleSelection(_ payload: OnSelectionPayload){
-    self.sendEvent("onSelection", [
-      "numSelected": payload.numSelected
-    ])
+  func handleOnSelection(_ payload: OnSelectionPayload){
+    self.sendEvent("onSelection", payload.toDictionary())
+  }
+  
+  func handleOnProcessed(_ payload: AssetInfo){
+    self.sendEvent("onProcessed", payload.toDictionary())
   }
 
   private func getMediaLibraryPermissionRequester(_ writeOnly: Bool) -> AnyClass {
@@ -207,10 +210,12 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
       return promise.reject(FileSystemModuleNotFoundException())
     }
       
-    self.handleSelection(OnSelectionPayload(numSelected: selection.count))
+    self.handleOnSelection(OnSelectionPayload(numSelected: selection.count))
 
     let mediaHandler = MediaHandler(fileSystem: fileSystem,
-                                    options: options)
+                                    options: options,
+                                    handleOnProcessed: handleOnProcessed
+    )
 
     // Clean up the currently stored picking context
     self.currentPickingContext = nil
@@ -237,7 +242,9 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     self.currentPickingContext = nil
 
     let mediaHandler = MediaHandler(fileSystem: fileSystem,
-                                    options: options)
+                                    options: options,
+                                    handleOnProcessed: handleOnProcessed
+    )
     mediaHandler.handleMedia(mediaInfo) { result -> Void in
       switch result {
       case .failure(let error): return promise.reject(error)

@@ -8,6 +8,7 @@ import PhotosUI
 internal struct MediaHandler {
   internal weak var fileSystem: EXFileSystemInterface?
   internal let options: ImagePickerOptions
+  internal let handleOnProcessed: (AssetInfo) -> Void
 
   internal func handleMedia(_ mediaInfo: MediaInfo, completion: @escaping (ImagePickerResult) -> Void) {
     let mediaType: String? = mediaInfo[UIImagePickerController.InfoKey.mediaType] as? String
@@ -33,6 +34,9 @@ internal struct MediaHandler {
       case .failure(let exception):
         return completion(.failure(exception))
       case .success(let mediaInfo):
+        if let hasOnProcessed = options.hasOnProcessed, hasOnProcessed {
+          handleOnProcessed(mediaInfo)
+        }
         dispatchQueue.async {
           results[index] = mediaInfo
           dispatchGroup.leave()

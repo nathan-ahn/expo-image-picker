@@ -199,7 +199,7 @@ const emitter = new EventEmitter(
  * the selected media assets which have a form of [`ImagePickerAsset`](#imagepickerasset).
  */
 export async function launchImageLibraryAsync(
-  {onSelection, ...options}: ImagePickerOptions={}
+  {onSelection, onProcessed, ...options}: ImagePickerOptions={}
 ): Promise<ImagePickerResult> {
   if (!ExponentImagePicker.launchImageLibraryAsync) {
     throw new UnavailabilityError('ImagePicker', 'launchImageLibraryAsync');
@@ -211,9 +211,14 @@ export async function launchImageLibraryAsync(
         'to fix this warning.'
     );
   }
-  const subscription = emitter.addListener("onSelection", onSelection ?? (() => {}))
-  const res = await ExponentImagePicker.launchImageLibraryAsync(options);
-  subscription.remove();
+  const onSelectionSubscription = onSelection ? emitter.addListener("onSelection", onSelection) : null;
+  const onProcessedSubscription = onProcessed ? emitter.addListener("onProcessed", onProcessed) : null;
+  const res = await ExponentImagePicker.launchImageLibraryAsync({
+    ...options,
+    hasOnProcessed: !!onProcessed,
+  });
+  onSelectionSubscription?.remove();
+  onProcessedSubscription?.remove();
   return res;
 }
 

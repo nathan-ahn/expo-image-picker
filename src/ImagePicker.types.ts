@@ -492,8 +492,17 @@ export type ImagePickerOptions = {
   preferredAssetRepresentationMode?: UIImagePickerPreferredAssetRepresentationMode;
   /**
    * Callback that is invoked when the selection is finalized.
+   * 
+   * @platform ios
    */
   onSelection?: (event: OnSelectionEventPayload) => void;
+
+  /**
+   * Callback that is invoked when an asset is finished processing.
+   * 
+   * @platform ios
+   */
+   onProcessed?: (asset: ImagePickerAsset) => void;
 
   /**
    * Whether to allow the response to be an HEIC image. If `false`, the response will be a JPEG compressed using the `quality` option.

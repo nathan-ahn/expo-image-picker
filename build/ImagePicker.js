@@ -143,7 +143,7 @@ const emitter = new EventEmitter(ExponentImagePicker ?? NativeModulesProxy.Expon
  * When the user canceled the action the `assets` is always `null`, otherwise it's an array of
  * the selected media assets which have a form of [`ImagePickerAsset`](#imagepickerasset).
  */
-export async function launchImageLibraryAsync({ onSelection, ...options } = {}) {
+export async function launchImageLibraryAsync({ onSelection, onProcessed, ...options } = {}) {
     if (!ExponentImagePicker.launchImageLibraryAsync) {
         throw new UnavailabilityError('ImagePicker', 'launchImageLibraryAsync');
     }
@@ -152,9 +152,14 @@ export async function launchImageLibraryAsync({ onSelection, ...options } = {}) 
             "Disable either 'allowsEditing' or 'allowsMultipleSelection' in 'launchImageLibraryAsync' " +
             'to fix this warning.');
     }
-    const subscription = emitter.addListener("onSelection", onSelection ?? (() => { }));
-    const res = await ExponentImagePicker.launchImageLibraryAsync(options);
-    subscription.remove();
+    const onSelectionSubscription = onSelection ? emitter.addListener("onSelection", onSelection) : null;
+    const onProcessedSubscription = onProcessed ? emitter.addListener("onProcessed", onProcessed) : null;
+    const res = await ExponentImagePicker.launchImageLibraryAsync({
+        ...options,
+        hasOnProcessed: !!onProcessed,
+    });
+    onSelectionSubscription?.remove();
+    onProcessedSubscription?.remove();
     return res;
 }
 export * from './ImagePicker.types';
