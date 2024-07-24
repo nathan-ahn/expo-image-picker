@@ -24,6 +24,10 @@ internal struct MediaHandler {
 
   @available(iOS 14, *)
   internal func handleMultipleMedia(_ selection: [PHPickerResult], completion: @escaping (ImagePickerResult) -> Void) {
+    var selection = selection
+    if(options.prefersReversedOrder) {
+      selection.reverse()
+    }
     var results = [AssetInfo?](repeating: nil, count: selection.count)
 
     let dispatchGroup = DispatchGroup()

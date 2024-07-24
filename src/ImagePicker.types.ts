@@ -534,6 +534,11 @@ export type ImagePickerOptions = {
    */
   prefersDirectory?: string
 
+  /**
+   * Whether to prefer reversed selection order when processing and returning results
+   */
+  prefersReversedOrder?: boolean
+
   /*
    * Uses the legacy image picker on Android. This will allow media to be selected from outside the users photo library.
    * @platform android

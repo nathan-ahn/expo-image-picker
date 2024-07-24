@@ -70,6 +70,9 @@ internal struct ImagePickerOptions: Record {
     
   @Field
   var hasOnProcessed: Bool?
+    
+  @Field
+  var prefersReversedOrder: Bool = false
 }
 
 internal enum PresentationStyle: String, Enumerable {

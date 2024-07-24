@@ -502,6 +502,10 @@ export type ImagePickerOptions = {
      * The directory to prefer when copying assets.
      */
     prefersDirectory?: string;
+    /**
+     * Whether to prefer reversed selection order when processing and returning results
+     */
+    prefersReversedOrder?: boolean;
     legacy?: boolean;
 };
 export type OpenFileBrowserOptions = {
