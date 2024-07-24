@@ -34,6 +34,7 @@ internal struct MediaHandler {
       case .failure(let exception):
         return completion(.failure(exception))
       case .success(let mediaInfo):
+          mediaInfo.selectionIndex = index
         if let hasOnProcessed = options.hasOnProcessed, hasOnProcessed {
           handleOnProcessed(mediaInfo)
         }

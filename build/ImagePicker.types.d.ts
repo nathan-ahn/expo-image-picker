@@ -278,6 +278,10 @@ export type ImagePickerAsset = {
      * Video uri for a live photo, if the asset is a live photo.
      */
     livePhotoVideoUri?: string;
+    /**
+     * Index of the asset in the selection order.
+     */
+    selectionIndex?: number;
 };
 export type ImagePickerErrorResult = {
     /**

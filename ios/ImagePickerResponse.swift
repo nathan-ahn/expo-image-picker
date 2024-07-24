@@ -45,4 +45,5 @@ internal struct AssetInfo: Record {
   @Field var duration: Double? = nil
   @Field var livePhotoImageUri: String? = nil
   @Field var livePhotoVideoUri: String? = nil
+  @Field var selectionIndex: Int? = nil
 }
