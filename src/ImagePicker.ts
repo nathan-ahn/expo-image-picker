@@ -2,6 +2,7 @@ import {
   CodedError,
   createPermissionHook,
   EventEmitter,
+  NativeModulesProxy,
   PermissionExpiration,
   PermissionHookOptions,
   PermissionResponse,
@@ -176,7 +177,7 @@ export async function launchCameraAsync(
 }
 
 const emitter = new EventEmitter(
-	ExponentImagePicker ?? NativeModulesProxy.ExponentImagePicker,
+	ExponentImagePicker,
 );
 // @needsAudit
 /**

@@ -251,11 +251,7 @@ export type ImagePickerAsset = {
      * - `'livePhoto'` - for live photos. (iOS only)
      * - `'pairedVideo'` - for videos paired with photos, which can be combined to create a live photo. (iOS only)
      */
-<<<<<<< HEAD
-    type?: 'image' | 'video' | 'livePhoto';
-=======
     type?: 'image' | 'video' | 'livePhoto' | 'pairedVideo';
->>>>>>> upstream-expo-image-picker
     /**
      * Preferred filename to use when saving this item. This might be `null` when the name is unavailable
      * or user gave limited permission to access the media library.
@@ -297,7 +293,6 @@ export type ImagePickerAsset = {
      */
     mimeType?: string;
     /**
-<<<<<<< HEAD
      * Image uri for a live photo, if the asset is a live photo.
      *
      * This is a different file from uri since live photos copy to a separate directory, as well as to maintain the same behavior as the official `expo-image-picker`.
@@ -311,11 +306,6 @@ export type ImagePickerAsset = {
      * Index of the asset in the selection order.
      */
     selectionIndex?: number;
-=======
-     * Contains information about the video paired with the image file. This property is only set when `livePhotos` media type was present in the `mediaTypes` array when launching the picker and a live photo was selected.
-     *
-     * @platform ios
-     */
     pairedVideoAsset?: ImagePickerAsset | null;
     /**
      * The web `File` object containing the selected media. This property is web-only and can be used to upload to a server with `FormData`.
@@ -323,7 +313,6 @@ export type ImagePickerAsset = {
      * @platform web
      */
     file?: File;
->>>>>>> upstream-expo-image-picker
 };
 export type ImagePickerErrorResult = {
     /**

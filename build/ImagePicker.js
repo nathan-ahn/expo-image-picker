@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { PermissionStatus, createPermissionHook, UnavailabilityError, CodedError, EventEmitter, NativeModulesProxy } from 'expo-modules-core';
-=======
-import { CodedError, createPermissionHook, PermissionStatus, UnavailabilityError, } from 'expo-modules-core';
->>>>>>> upstream-expo-image-picker
+import { CodedError, createPermissionHook, EventEmitter, PermissionStatus, UnavailabilityError, } from 'expo-modules-core';
 import ExponentImagePicker from './ExponentImagePicker';
 import { mapDeprecatedOptions } from './utils';
 function validateOptions(options) {
@@ -127,7 +123,7 @@ export async function launchCameraAsync(options = {}) {
     const mappedOptions = mapDeprecatedOptions(options);
     return await ExponentImagePicker.launchCameraAsync(validateOptions(mappedOptions));
 }
-const emitter = new EventEmitter(ExponentImagePicker ?? NativeModulesProxy.ExponentImagePicker);
+const emitter = new EventEmitter(ExponentImagePicker);
 // @needsAudit
 /**
  * Display the system UI for choosing an image or a video from the phone's library.
@@ -149,12 +145,8 @@ const emitter = new EventEmitter(ExponentImagePicker ?? NativeModulesProxy.Expon
  * When the user canceled the action the `assets` is always `null`, otherwise it's an array of
  * the selected media assets which have a form of [`ImagePickerAsset`](#imagepickerasset).
  */
-<<<<<<< HEAD
 export async function launchImageLibraryAsync({ onSelection, onProcessed, ...options } = {}) {
-=======
-export async function launchImageLibraryAsync(options = {}) {
     const mappedOptions = mapDeprecatedOptions(options);
->>>>>>> upstream-expo-image-picker
     if (!ExponentImagePicker.launchImageLibraryAsync) {
         throw new UnavailabilityError('ImagePicker', 'launchImageLibraryAsync');
     }
@@ -163,7 +155,6 @@ export async function launchImageLibraryAsync(options = {}) {
             "Disable either 'allowsEditing' or 'allowsMultipleSelection' in 'launchImageLibraryAsync' " +
             'to fix this warning.');
     }
-<<<<<<< HEAD
     const onSelectionSubscription = onSelection ? emitter.addListener("onSelection", onSelection) : null;
     const onProcessedSubscription = onProcessed ? emitter.addListener("onProcessed", onProcessed) : null;
     const res = await ExponentImagePicker.launchImageLibraryAsync({
@@ -173,9 +164,6 @@ export async function launchImageLibraryAsync(options = {}) {
     onSelectionSubscription?.remove();
     onProcessedSubscription?.remove();
     return res;
-=======
-    return await ExponentImagePicker.launchImageLibraryAsync(mappedOptions);
->>>>>>> upstream-expo-image-picker
 }
 export * from './ImagePicker.types';
 export { PermissionStatus };
