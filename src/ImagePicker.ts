@@ -1,6 +1,7 @@
 import {
   CodedError,
   createPermissionHook,
+  EventEmitter,
   PermissionExpiration,
   PermissionHookOptions,
   PermissionResponse,
