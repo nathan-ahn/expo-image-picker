@@ -1,23 +1,22 @@
 import {
-  PermissionStatus,
+  CodedError,
+  createPermissionHook,
   PermissionExpiration,
   PermissionHookOptions,
   PermissionResponse,
-  createPermissionHook,
+  PermissionStatus,
   UnavailabilityError,
-  CodedError,
-  EventEmitter,
-  NativeModulesProxy
 } from 'expo-modules-core';
 
 import ExponentImagePicker from './ExponentImagePicker';
 import {
   CameraPermissionResponse,
-  MediaLibraryPermissionResponse,
-  ImagePickerResult,
   ImagePickerErrorResult,
   ImagePickerOptions,
+  ImagePickerResult,
+  MediaLibraryPermissionResponse,
 } from './ImagePicker.types';
+import { mapDeprecatedOptions } from './utils';
 
 function validateOptions(options: ImagePickerOptions) {
   const { aspect, quality, videoMaxDuration } = options;
@@ -171,7 +170,8 @@ export async function launchCameraAsync(
   if (!ExponentImagePicker.launchCameraAsync) {
     throw new UnavailabilityError('ImagePicker', 'launchCameraAsync');
   }
-  return await ExponentImagePicker.launchCameraAsync(validateOptions(options));
+  const mappedOptions = mapDeprecatedOptions(options);
+  return await ExponentImagePicker.launchCameraAsync(validateOptions(mappedOptions));
 }
 
 const emitter = new EventEmitter(
@@ -201,10 +201,12 @@ const emitter = new EventEmitter(
 export async function launchImageLibraryAsync(
   {onSelection, onProcessed, ...options}: ImagePickerOptions={}
 ): Promise<ImagePickerResult> {
+  const mappedOptions = mapDeprecatedOptions(options);
+
   if (!ExponentImagePicker.launchImageLibraryAsync) {
     throw new UnavailabilityError('ImagePicker', 'launchImageLibraryAsync');
   }
-  if (options?.allowsEditing && options.allowsMultipleSelection) {
+  if (mappedOptions?.allowsEditing && mappedOptions.allowsMultipleSelection) {
     console.warn(
       '[expo-image-picker] `allowsEditing` is not supported when `allowsMultipleSelection` is enabled and will be ignored.' +
         "Disable either 'allowsEditing' or 'allowsMultipleSelection' in 'launchImageLibraryAsync' " +

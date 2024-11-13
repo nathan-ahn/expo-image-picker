@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { PermissionStatus, createPermissionHook, UnavailabilityError, CodedError, EventEmitter, NativeModulesProxy } from 'expo-modules-core';
+=======
+import { CodedError, createPermissionHook, PermissionStatus, UnavailabilityError, } from 'expo-modules-core';
+>>>>>>> upstream-expo-image-picker
 import ExponentImagePicker from './ExponentImagePicker';
+import { mapDeprecatedOptions } from './utils';
 function validateOptions(options) {
     const { aspect, quality, videoMaxDuration } = options;
     if (aspect != null) {
@@ -119,7 +124,8 @@ export async function launchCameraAsync(options = {}) {
     if (!ExponentImagePicker.launchCameraAsync) {
         throw new UnavailabilityError('ImagePicker', 'launchCameraAsync');
     }
-    return await ExponentImagePicker.launchCameraAsync(validateOptions(options));
+    const mappedOptions = mapDeprecatedOptions(options);
+    return await ExponentImagePicker.launchCameraAsync(validateOptions(mappedOptions));
 }
 const emitter = new EventEmitter(ExponentImagePicker ?? NativeModulesProxy.ExponentImagePicker);
 // @needsAudit
@@ -143,15 +149,21 @@ const emitter = new EventEmitter(ExponentImagePicker ?? NativeModulesProxy.Expon
  * When the user canceled the action the `assets` is always `null`, otherwise it's an array of
  * the selected media assets which have a form of [`ImagePickerAsset`](#imagepickerasset).
  */
+<<<<<<< HEAD
 export async function launchImageLibraryAsync({ onSelection, onProcessed, ...options } = {}) {
+=======
+export async function launchImageLibraryAsync(options = {}) {
+    const mappedOptions = mapDeprecatedOptions(options);
+>>>>>>> upstream-expo-image-picker
     if (!ExponentImagePicker.launchImageLibraryAsync) {
         throw new UnavailabilityError('ImagePicker', 'launchImageLibraryAsync');
     }
-    if (options?.allowsEditing && options.allowsMultipleSelection) {
+    if (mappedOptions?.allowsEditing && mappedOptions.allowsMultipleSelection) {
         console.warn('[expo-image-picker] `allowsEditing` is not supported when `allowsMultipleSelection` is enabled and will be ignored.' +
             "Disable either 'allowsEditing' or 'allowsMultipleSelection' in 'launchImageLibraryAsync' " +
             'to fix this warning.');
     }
+<<<<<<< HEAD
     const onSelectionSubscription = onSelection ? emitter.addListener("onSelection", onSelection) : null;
     const onProcessedSubscription = onProcessed ? emitter.addListener("onProcessed", onProcessed) : null;
     const res = await ExponentImagePicker.launchImageLibraryAsync({
@@ -161,6 +173,9 @@ export async function launchImageLibraryAsync({ onSelection, onProcessed, ...opt
     onSelectionSubscription?.remove();
     onProcessedSubscription?.remove();
     return res;
+=======
+    return await ExponentImagePicker.launchImageLibraryAsync(mappedOptions);
+>>>>>>> upstream-expo-image-picker
 }
 export * from './ImagePicker.types';
 export { PermissionStatus };

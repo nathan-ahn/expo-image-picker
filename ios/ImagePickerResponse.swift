@@ -29,7 +29,7 @@ internal struct ImagePickerResponse: Record {
 }
 
 /**
- Represents a single asset (image or video).
+ Represents a single asset (image, live photo or video).
  */
 internal struct AssetInfo: Record {
   @Field var assetId: String? = nil
@@ -46,4 +46,5 @@ internal struct AssetInfo: Record {
   @Field var livePhotoImageUri: String? = nil
   @Field var livePhotoVideoUri: String? = nil
   @Field var selectionIndex: Int? = nil
+  @Field var pairedVideoAsset: AssetInfo? = nil
 }
