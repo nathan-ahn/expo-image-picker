@@ -2,7 +2,6 @@ import {
   CodedError,
   createPermissionHook,
   EventEmitter,
-  NativeModulesProxy,
   PermissionExpiration,
   PermissionHookOptions,
   PermissionResponse,
@@ -13,10 +12,12 @@ import {
 import ExponentImagePicker from './ExponentImagePicker';
 import {
   CameraPermissionResponse,
+  ImagePickerAsset,
   ImagePickerErrorResult,
   ImagePickerOptions,
   ImagePickerResult,
   MediaLibraryPermissionResponse,
+  OnSelectionEventPayload,
 } from './ImagePicker.types';
 import { mapDeprecatedOptions } from './utils';
 
@@ -176,9 +177,10 @@ export async function launchCameraAsync(
   return await ExponentImagePicker.launchCameraAsync(validateOptions(mappedOptions));
 }
 
-const emitter = new EventEmitter(
-	ExponentImagePicker,
-);
+const emitter = new EventEmitter<{
+    onSelection: (event: OnSelectionEventPayload) => void;
+    onProcessed: (event: ImagePickerAsset) => void;
+}>();
 // @needsAudit
 /**
  * Display the system UI for choosing an image or a video from the phone's library.
@@ -201,7 +203,7 @@ const emitter = new EventEmitter(
  * the selected media assets which have a form of [`ImagePickerAsset`](#imagepickerasset).
  */
 export async function launchImageLibraryAsync(
-  {onSelection, onProcessed, ...options}: ImagePickerOptions={}
+  { onSelection, onProcessed, ...options }: ImagePickerOptions = {}
 ): Promise<ImagePickerResult> {
   const mappedOptions = mapDeprecatedOptions(options);
 

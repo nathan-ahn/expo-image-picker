@@ -123,7 +123,7 @@ export async function launchCameraAsync(options = {}) {
     const mappedOptions = mapDeprecatedOptions(options);
     return await ExponentImagePicker.launchCameraAsync(validateOptions(mappedOptions));
 }
-const emitter = new EventEmitter(ExponentImagePicker);
+const emitter = new EventEmitter();
 // @needsAudit
 /**
  * Display the system UI for choosing an image or a video from the phone's library.
