@@ -119,7 +119,7 @@ internal struct ImageUtils {
         let data = image.heicData()
         return (data, ".heic")
       } else {
-        let data = image.jpegData(compressionQuality: compressionQuality)
+        let data = image.jpegData(compressionQuality: options.quality)
         return (data, ".jpg")
       }
     case UTType.heif.identifier:
@@ -130,14 +130,14 @@ internal struct ImageUtils {
         let data = image.heicData()
         return (data, ".heic")
       } else {
-        let data = image.jpegData(compressionQuality: compressionQuality)
+        let data = image.jpegData(compressionQuality: options.quality)
         return (data, ".jpg")
       }
     case UTType.jpeg.identifier:
-      if compressionQuality == 1, options.prefersOriginal {
+      if options.quality == 1, options.prefersOriginal {
         return (rawData, ".jpg")
       }
-      let data = image.jpegData(compressionQuality: compressionQuality)
+      let data = image.jpegData(compressionQuality: options.quality)
       return (data, ".jpg")
     default:
       if options.quality >= 1.0 {

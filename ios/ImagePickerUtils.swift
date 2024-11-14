@@ -31,3 +31,20 @@ func concurrentMap<ItemsType: Sequence, ResultType>(
     try await task.value
   }
 }
+
+/**
+ Concurrently maps the given sequence with index.
+ */
+func concurrentMapEnumerated<ItemsType: Sequence, ResultType>(
+  _ items: ItemsType,
+  _ transform: @escaping (ItemsType.Element, Int) async throws -> ResultType
+) async rethrows -> [ResultType] {
+  let tasks = items.enumerated().map { index, item in
+      Task {
+      try await transform(item, index)
+      }
+  }
+  return try await asyncMap(tasks) { task in
+      try await task.value
+  }
+}

@@ -28,26 +28,27 @@ internal struct MediaHandler {
     if(options.prefersReversedOrder) {
       selection.reverse()
     }
-    return try await concurrentMap(selection) { selectedItem in
+    return try await concurrentMapEnumerated(selection) { (selectedItem, index) in
       let itemProvider = selectedItem.itemProvider
 
-      var maybeMediaInfo: MediaInfo? = nil
+      var maybeAssetInfo: AssetInfo? = nil
       if itemProvider.canLoadObject(ofClass: PHLivePhoto.self) && options.mediaTypes.contains(.livePhotos) {
-        maybeMediaInfo = try await handleLivePhoto(from: selectedItem)
+        maybeAssetInfo = try await handleLivePhoto(from: selectedItem)
       }
       if itemProvider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
-        maybeMediaInfo = try await handleImage(from: selectedItem)
+        maybeAssetInfo = try await handleImage(from: selectedItem)
       }
       if itemProvider.hasItemConformingToTypeIdentifier(UTType.movie.identifier) {
-        maybeMediaInfo = try await handleVideo(from: selectedItem)
+        maybeAssetInfo = try await handleVideo(from: selectedItem)
       }
-      guard let mediaInfo = maybeMediaInfo else {
+      guard let assetInfo = maybeAssetInfo else {
         throw InvalidMediaTypeException(itemProvider.registeredTypeIdentifiers.first)
       }
-      mediaInfo.selectionIndex = index
+      assetInfo.selectionIndex = index
       if let hasOnProcessed = options.hasOnProcessed, hasOnProcessed {
-        handleOnProcessed(mediaInfo)
+        handleOnProcessed(assetInfo)
       }
+      return assetInfo
     }
   }
 
