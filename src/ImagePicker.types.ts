@@ -309,16 +309,6 @@ export type ImagePickerAsset = {
    */
   mimeType?: string;
   /**
-   * Image uri for a live photo, if the asset is a live photo.
-   * 
-   * This is a different file from uri since live photos copy to a separate directory, as well as to maintain the same behavior as the official `expo-image-picker`.
-   */
-  livePhotoImageUri?: string;
-  /**
-   * Video uri for a live photo, if the asset is a live photo.
-   */
-  livePhotoVideoUri?: string;
-  /**
    * Index of the asset in the selection order.
    */
   selectionIndex?: number

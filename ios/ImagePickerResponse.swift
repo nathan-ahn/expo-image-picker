@@ -43,8 +43,6 @@ internal struct AssetInfo: Record {
   @Field var base64: String? = nil
   @Field var exif: ExifInfo? = nil
   @Field var duration: Double? = nil
-  @Field var livePhotoImageUri: String? = nil
-  @Field var livePhotoVideoUri: String? = nil
   @Field var selectionIndex: Int? = nil
   @Field var pairedVideoAsset: AssetInfo? = nil
 }
