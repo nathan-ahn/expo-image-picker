@@ -1,4 +1,4 @@
-import { CodedError, createPermissionHook, EventEmitter, PermissionStatus, UnavailabilityError, } from 'expo-modules-core';
+import { CodedError, createPermissionHook, PermissionStatus, UnavailabilityError, } from 'expo-modules-core';
 import ExponentImagePicker from './ExponentImagePicker';
 import { mapDeprecatedOptions } from './utils';
 function validateOptions(options) {
@@ -123,7 +123,6 @@ export async function launchCameraAsync(options = {}) {
     const mappedOptions = mapDeprecatedOptions(options);
     return await ExponentImagePicker.launchCameraAsync(validateOptions(mappedOptions));
 }
-const emitter = new EventEmitter();
 // @needsAudit
 /**
  * Display the system UI for choosing an image or a video from the phone's library.
@@ -155,8 +154,8 @@ export async function launchImageLibraryAsync({ onSelection, onProcessed, ...opt
             "Disable either 'allowsEditing' or 'allowsMultipleSelection' in 'launchImageLibraryAsync' " +
             'to fix this warning.');
     }
-    const onSelectionSubscription = onSelection ? emitter.addListener("onSelection", onSelection) : null;
-    const onProcessedSubscription = onProcessed ? emitter.addListener("onProcessed", onProcessed) : null;
+    const onSelectionSubscription = onSelection ? ExponentImagePicker.addListener("onSelection", onSelection) : null;
+    const onProcessedSubscription = onProcessed ? ExponentImagePicker.addListener("onProcessed", onProcessed) : null;
     const res = await ExponentImagePicker.launchImageLibraryAsync({
         ...options,
         hasOnProcessed: !!onProcessed,

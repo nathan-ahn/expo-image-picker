@@ -24,8 +24,7 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
   public func definition() -> ModuleDefinition {
     // TODO: (@bbarthec) change to "ExpoImagePicker" and propagate to other platforms
     Name("ExponentImagePicker")
-    Events("onSelection")
-    Events("onProcessed")
+    Events("onSelection", "onProcessed")
 
     OnCreate {
       self.appContext?.permissions?.register([
@@ -222,8 +221,7 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
 
     let mediaHandler = MediaHandler(fileSystem: fileSystem,
                                     options: options,
-                                    handleOnProcessed: handleOnProcessed
-    )
+                                    handleOnProcessed: handleOnProcessed)
 
     // Clean up the currently stored picking context
     self.currentPickingContext = nil
