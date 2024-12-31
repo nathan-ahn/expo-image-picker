@@ -28,7 +28,7 @@ internal struct MediaHandler {
     if(options.prefersReversedOrder) {
       selection.reverse()
     }
-    return try await concurrentMapEnumerated(selection) { (selectedItem, index) in
+    return try await concurrentMapEnumeratedQueued(selection) { (selectedItem, index) in
       let itemProvider = selectedItem.itemProvider
 
       var maybeAssetInfo: AssetInfo? = nil
