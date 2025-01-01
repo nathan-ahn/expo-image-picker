@@ -134,7 +134,7 @@ internal struct ImageUtils {
         return (data, ".jpg")
       }
     case UTType.jpeg.identifier:
-      if options.quality == 1, options.prefersOriginal {
+      if options.prefersOriginal {
         return (rawData, ".jpg")
       }
       let data = image.jpegData(compressionQuality: options.quality)
