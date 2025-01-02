@@ -32,7 +32,7 @@ internal struct MediaHandler {
       let itemProvider = selectedItem.itemProvider
 
       var maybeAssetInfo: AssetInfo? = nil
-      if itemProvider.hasItemConformingToTypeIdentifier(UTType.livePhoto.identifier) || itemProvider.hasItemConformingToTypeIdentifier("com.apple.live-photo-bundle") {
+      if options.mediaTypes.contains(.livePhotos) && (itemProvider.hasItemConformingToTypeIdentifier(UTType.livePhoto.identifier) || itemProvider.hasItemConformingToTypeIdentifier("com.apple.live-photo-bundle")) {
         maybeAssetInfo = try await handleLivePhoto(from: selectedItem)
       }
       else if itemProvider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
