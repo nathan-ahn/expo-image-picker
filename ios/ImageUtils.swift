@@ -140,9 +140,6 @@ internal struct ImageUtils {
       let data = image.jpegData(compressionQuality: options.quality)
       return (data, ".jpg")
     default:
-      if options.quality >= 1.0 {
-        return (rawData, ".jpg")
-      }
       let data = image.jpegData(compressionQuality: options.quality)
       return (data, ".jpg")
     }
