@@ -41,7 +41,7 @@ internal struct ImagePickerOptions: Record {
   var presentationStyle: PresentationStyle = .automatic
 
   @Field
-  var preferredAssetRepresentationMode: PreferredAssetRepresentationMode = .automatic
+  var preferredAssetRepresentationMode: PreferredAssetRepresentationMode = .current
 
   @Field
   var cameraType: CameraType = .back
@@ -54,24 +54,27 @@ internal struct ImagePickerOptions: Record {
 
   @Field
   var orderedSelection: Bool = false
-    
+
   @Field
   var allowsHeif: Bool = false
-    
+
   @Field
   var prefersOriginal: Bool = false
-    
+
   @Field
   var fastCopy: Bool = false
-    
+
   @Field
   var prefersDirectory: String?
-    
+
   @Field
   var hasOnProcessed: Bool?
-    
+
   @Field
   var prefersReversedOrder: Bool = false
+
+  @Field
+  var shouldDownloadFromNetwork: Bool = false
 
   func toMediaTypesArray() -> [String] {
     var mediaTypesArray = mediaTypes.map { mediaType in
@@ -218,7 +221,7 @@ internal enum MediaType: String, Enumerable {
   func toPickerFilter() -> PHPickerFilter {
     switch self {
     case .images:
-        return .any(of: [.images, .livePhotos])
+      return .any(of: [.images, .livePhotos])
     case .videos:
       return .videos
     case .livePhotos:
