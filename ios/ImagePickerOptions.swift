@@ -54,24 +54,27 @@ internal struct ImagePickerOptions: Record {
 
   @Field
   var orderedSelection: Bool = false
-    
+
   @Field
   var allowsHeif: Bool = false
-    
+
   @Field
   var prefersOriginal: Bool = false
-    
+
   @Field
   var fastCopy: Bool = false
-    
+
   @Field
   var prefersDirectory: String?
-    
+
   @Field
   var hasOnProcessed: Bool?
-    
+
   @Field
   var prefersReversedOrder: Bool = false
+
+  @Field
+  var shouldDownloadFromNetwork: Bool = false
 
   func toMediaTypesArray() -> [String] {
     var mediaTypesArray = mediaTypes.map { mediaType in

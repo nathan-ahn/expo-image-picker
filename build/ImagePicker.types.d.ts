@@ -245,21 +245,22 @@ export type ImagePickerAsset = {
      */
     assetId?: string | null;
     /**
-     * Width of the image or video.
+     * Width of the image or video. Can be `0` if the system did not provide the width.
      */
-    width?: number;
+    width: number;
     /**
-     * Height of the image or video.
+     * Height of the image or video. Can be `0` if the system did not provide the height.
      */
-    height?: number;
+    height: number;
     /**
      * The type of the asset.
      * - `'image'` - for images.
      * - `'video'` - for videos.
      * - `'livePhoto'` - for live photos. (iOS only)
      * - `'pairedVideo'` - for videos paired with photos, which can be combined to create a live photo. (iOS only)
+     * - `null` - when the type could not be determined. This is rare but can happen with some Android ContentProviders.
      */
-    type?: 'image' | 'video' | 'livePhoto' | 'pairedVideo';
+    type?: 'image' | 'video' | 'livePhoto' | 'pairedVideo' | null;
     /**
      * Preferred filename to use when saving this item. This might be `null` when the name is unavailable
      * or user gave limited permission to access the media library.
@@ -301,9 +302,10 @@ export type ImagePickerAsset = {
      */
     mimeType?: string;
     /**
-     * Index of the asset in the selection order.
+     * Contains information about the video paired with the image file. This property is only set when `livePhotos` media type was present in the `mediaTypes` array when launching the picker and a live photo was selected.
+     *
+     * @platform ios
      */
-    selectionIndex?: number;
     pairedVideoAsset?: ImagePickerAsset | null;
     /**
      * The web `File` object containing the selected media. This property is web-only and can be used to upload to a server with `FormData`.
@@ -366,12 +368,10 @@ export type ImagePickerCancelledResult = ImagePickerCanceledResult;
  * @deprecated `ImagePickerMultipleResult` has been deprecated in favor of `ImagePickerResult`.
  */
 export type ImagePickerMultipleResult = ImagePickerResult;
-export type OnSelectionEventPayload = {
-    /**
-     * Number of assets selected.
-     */
-    numSelected?: number;
-};
+/**
+ * The shape of the crop area.
+ */
+export type CropShape = 'rectangle' | 'oval';
 export type ImagePickerOptions = {
     /**
      * Whether to show a UI to edit the image after it is picked. On Android the user can crop and
@@ -392,6 +392,14 @@ export type ImagePickerOptions = {
      * Android, since on iOS the crop rectangle is always a square.
      */
     aspect?: [number, number];
+    /**
+     * Specify the shape of the crop area if the user is allowed to edit the image
+     * (by passing `allowsEditing: true`). This option is only applicable on Android.
+     *
+     * @default rectangle
+     * @platform android
+     */
+    shape?: CropShape;
     /**
      * Specify the quality of compression, from `0` to `1`. `0` means compress for small size,
      * `1` means compress for maximum quality.
@@ -506,44 +514,22 @@ export type ImagePickerOptions = {
      */
     preferredAssetRepresentationMode?: UIImagePickerPreferredAssetRepresentationMode;
     /**
-     * Callback that is invoked when the selection is finalized.
-     *
-     * @platform ios
-     */
-    onSelection?: (event: OnSelectionEventPayload) => void;
-    /**
-     * Callback that is invoked when an asset is finished processing.
-     *
-     * @platform ios
-     */
-    onProcessed?: (asset: ImagePickerAsset) => void;
-    /**
-     * Whether to allow the response to be an HEIC image. If `false`, the response will be a JPEG compressed using the `quality` option.
-     *
+     * Uses the legacy image picker on Android. This will allow media to be selected from outside the users photo library.
+     * @platform android
      * @default false
      */
-    allowsHeif?: boolean;
-    /**
-     * Whether to prefer the original data when possible. This means the raw image data will be returned for PNG, HEIC, and JPEG (if `quality` is set to `1`).
-     *
-     * @default false
-     */
-    prefersOriginal?: boolean;
-    /**
-     * If enabled, ignores most other options and copies the original data directly.
-     *
-     * @default false
-     */
-    fastCopy?: boolean;
-    /**
-     * The directory to prefer when copying assets.
-     */
-    prefersDirectory?: string;
-    /**
-     * Whether to prefer reversed selection order when processing and returning results
-     */
-    prefersReversedOrder?: boolean;
     legacy?: boolean;
+    /**
+     * When enabled, allows the picker to access and download media from iCloud or other remote sources
+     * if the asset is not stored locally on the device.
+     *
+     * For videos, this option applies only when [`videoExportPreset`](#videoexportpreset) is set to `Passthrough`.
+     * In all other cases, the video will be downloaded from iCloud automatically.
+     *
+     * @platform ios
+     * @default false
+     */
+    shouldDownloadFromNetwork?: boolean;
 };
 /**
  * @hidden

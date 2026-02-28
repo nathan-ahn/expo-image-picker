@@ -275,8 +275,9 @@ export type ImagePickerAsset = {
    * - `'video'` - for videos.
    * - `'livePhoto'` - for live photos. (iOS only)
    * - `'pairedVideo'` - for videos paired with photos, which can be combined to create a live photo. (iOS only)
+   * - `null` - when the type could not be determined. This is rare but can happen with some Android ContentProviders.
    */
-  type?: 'image' | 'video' | 'livePhoto' | 'pairedVideo';
+  type?: 'image' | 'video' | 'livePhoto' | 'pairedVideo' | null;
   /**
    * Preferred filename to use when saving this item. This might be `null` when the name is unavailable
    * or user gave limited permission to access the media library.
@@ -405,6 +406,11 @@ export type OnSelectionEventPayload = {
   numSelected?: number;
 }
 
+/**
+ * The shape of the crop area.
+ */
+export type CropShape = 'rectangle' | 'oval';
+
 // @needsAudit
 export type ImagePickerOptions = {
   /**
@@ -426,6 +432,14 @@ export type ImagePickerOptions = {
    * Android, since on iOS the crop rectangle is always a square.
    */
   aspect?: [number, number];
+  /**
+   * Specify the shape of the crop area if the user is allowed to edit the image
+   * (by passing `allowsEditing: true`). This option is only applicable on Android.
+   *
+   * @default rectangle
+   * @platform android
+   */
+  shape?: CropShape;
   /**
    * Specify the quality of compression, from `0` to `1`. `0` means compress for small size,
    * `1` means compress for maximum quality.
@@ -541,35 +555,35 @@ export type ImagePickerOptions = {
   preferredAssetRepresentationMode?: UIImagePickerPreferredAssetRepresentationMode;
   /**
    * Callback that is invoked when the selection is finalized.
-   * 
+   *
    * @platform ios
    */
   onSelection?: (event: OnSelectionEventPayload) => void;
 
   /**
    * Callback that is invoked when an asset is finished processing.
-   * 
+   *
    * @platform ios
    */
    onProcessed?: (asset: ImagePickerAsset) => void;
 
   /**
    * Whether to allow the response to be an HEIC image. If `false`, the response will be a JPEG compressed using the `quality` option.
-   * 
+   *
    * @default false
    */
   allowsHeif?: boolean;
 
   /**
    * Whether to prefer the original data when possible. This means the raw image data will be returned for PNG, HEIC, and JPEG (if `quality` is set to `1`).
-   * 
+   *
    * @default false
    */
   prefersOriginal?: boolean;
 
   /**
    * If enabled, ignores most other options and copies the original data directly.
-   * 
+   *
    * @default false
    */
   fastCopy?: boolean;
@@ -590,6 +604,17 @@ export type ImagePickerOptions = {
    * @default false
    */
   legacy?: boolean;
+  /**
+   * When enabled, allows the picker to access and download media from iCloud or other remote sources
+   * if the asset is not stored locally on the device.
+   *
+   * For videos, this option applies only when [`videoExportPreset`](#videoexportpreset) is set to `Passthrough`.
+   * In all other cases, the video will be downloaded from iCloud automatically.
+   *
+   * @platform ios
+   * @default false
+   */
+  shouldDownloadFromNetwork?: boolean;
 };
 
 /**

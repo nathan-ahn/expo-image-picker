@@ -144,7 +144,7 @@ export async function launchCameraAsync(options = {}) {
  * When the user canceled the action the `assets` is always `null`, otherwise it's an array of
  * the selected media assets which have a form of [`ImagePickerAsset`](#imagepickerasset).
  */
-export async function launchImageLibraryAsync({ onSelection, onProcessed, ...options } = {}) {
+export async function launchImageLibraryAsync(options = {}) {
     const mappedOptions = mapDeprecatedOptions(options);
     if (!ExponentImagePicker.launchImageLibraryAsync) {
         throw new UnavailabilityError('ImagePicker', 'launchImageLibraryAsync');
@@ -154,15 +154,7 @@ export async function launchImageLibraryAsync({ onSelection, onProcessed, ...opt
             "Disable either 'allowsEditing' or 'allowsMultipleSelection' in 'launchImageLibraryAsync' " +
             'to fix this warning.');
     }
-    const onSelectionSubscription = onSelection ? ExponentImagePicker.addListener("onSelection", onSelection) : null;
-    const onProcessedSubscription = onProcessed ? ExponentImagePicker.addListener("onProcessed", onProcessed) : null;
-    const res = await ExponentImagePicker.launchImageLibraryAsync({
-        ...options,
-        hasOnProcessed: !!onProcessed,
-    });
-    onSelectionSubscription?.remove();
-    onProcessedSubscription?.remove();
-    return res;
+    return await ExponentImagePicker.launchImageLibraryAsync(mappedOptions);
 }
 export * from './ImagePicker.types';
 export { PermissionStatus };

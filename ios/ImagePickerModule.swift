@@ -80,11 +80,11 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     case .ask: permissions.askForPermission(usingRequesterClass: requesterClass, resolve: promise.resolver, reject: promise.legacyRejecter)
     }
   }
-    
+
   func handleOnSelection(_ payload: OnSelectionPayload){
     self.sendEvent("onSelection", payload.toDictionary())
   }
-  
+
   func handleOnProcessed(_ payload: AssetInfo){
     self.sendEvent("onProcessed", payload.toDictionary())
   }
@@ -216,7 +216,7 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     guard let fileSystem = self.appContext?.fileSystem else {
       return promise.reject(FileSystemModuleNotFoundException())
     }
-      
+
     self.handleOnSelection(OnSelectionPayload(numSelected: selection.count))
 
     let mediaHandler = MediaHandler(fileSystem: fileSystem,
