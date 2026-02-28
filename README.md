@@ -10,5 +10,7 @@ To get a branch linked with the original Expo repository, use the following comm
 - `git checkout -b upstream-main upstream/main`
 
 Then, to create a split branch with only code from `expo-image-picker`, use the following:
-- `git subtree split --prefix=packages/expo-image-picker -b upstream-image-picker`
+- `git branch upstream-image-picker && git filter-repo --refs upstream-image-picker --path packages/expo-image-picker/ --path-rename packages/expo-image-picker/: --force`
 - `git checkout upstream-image-picker`
+
+You may need to `brew install git-filter-repo` if you don't have filter-repo installed already.
