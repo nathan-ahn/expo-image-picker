@@ -20,6 +20,12 @@ internal struct OnSelectionPayload: Record {
     @Field var numSelected: Int = 0
 }
 
+extension OnSelectionPayload {
+  func toDictionary() -> [String: Any] {
+    return ["numSelected": numSelected]
+  }
+}
+
 /**
  Represents a picker response.
  */

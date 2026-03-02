@@ -50,7 +50,7 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
       self.handlePermissionRequest(requesterClass: self.getMediaLibraryPermissionRequester(writeOnly), operationType: .ask, promise: promise)
     })
 
-    AsyncFunction("launchCameraAsync", { (options: ImagePickerOptions, promise: Promise) -> Void in
+    AsyncFunction("launchCameraAsync", { (options: ImagePickerOptions, promise: Promise) in
       guard let permissions = self.appContext?.permissions else {
         return promise.reject(PermissionsModuleNotFoundException())
       }
@@ -80,12 +80,12 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     case .ask: permissions.askForPermission(usingRequesterClass: requesterClass, resolve: promise.resolver, reject: promise.legacyRejecter)
     }
   }
-    
-  func handleOnSelection(_ payload: OnSelectionPayload){
+
+  func handleOnSelection(_ payload: OnSelectionPayload) {
     self.sendEvent("onSelection", payload.toDictionary())
   }
-  
-  func handleOnProcessed(_ payload: AssetInfo){
+
+  func handleOnProcessed(_ payload: AssetInfo) {
     self.sendEvent("onProcessed", payload.toDictionary())
   }
 
@@ -216,7 +216,7 @@ public class ImagePickerModule: Module, OnMediaPickingResultHandler {
     guard let fileSystem = self.appContext?.fileSystem else {
       return promise.reject(FileSystemModuleNotFoundException())
     }
-      
+
     self.handleOnSelection(OnSelectionPayload(numSelected: selection.count))
 
     let mediaHandler = MediaHandler(fileSystem: fileSystem,
