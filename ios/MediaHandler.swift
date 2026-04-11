@@ -107,15 +107,10 @@ internal struct MediaHandler {
       }
       let fileSize = getFileSize(from: targetUrl)
 
-      let base64: String?
-      if options.base64 {
-        base64 = try ImageUtils.readJpegBase64From(image: image,
-                                                   compressionQuality: options.quality,
-                                                   orFileUrl: targetUrl,
-                                                   tryReadingFile: fileWasCopied)
-      } else {
-        base64 = nil
-      }
+      let base64 =
+        options.base64
+        ? try ImageUtils.readBase64From(
+          imageData: imageData, orImageFileUrl: targetUrl, tryReadingFile: fileWasCopied) : nil
 
       let exif = options.exif ? await ImageUtils.readExifFrom(mediaInfo: mediaInfo) : nil
       let size = CGSize(width: image.size.width, height: image.size.height)
