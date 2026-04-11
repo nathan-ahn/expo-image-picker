@@ -1,6 +1,6 @@
 {
   "name": "swsh-expo-image-picker",
-  "version": "55.0.9-fork.1",
+  "version": "55.0.9-fork.5",
   "description": "Provides access to the system's UI for selecting images and videos from the phone's library or taking a photo with the camera.",
   "main": "build/ImagePicker.js",
   "types": "build/ImagePicker.d.ts",
@@ -35,15 +35,13 @@
     "preset": "expo-module-scripts"
   },
   "dependencies": {
-    "expo-image-loader": "workspace:~55.0.0"
+    "expo": "~55.0.0",
+    "expo-image-loader": "~55.0.0"
   },
   "devDependencies": {
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.14.0",
-    "expo-module-scripts": "workspace:*"
-  },
-  "peerDependencies": {
-    "expo": "workspace:*"
+    "expo-module-scripts": "~55.0.0"
   }
 }
