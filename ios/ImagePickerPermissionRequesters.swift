@@ -2,7 +2,6 @@
 
 import Photos
 import ExpoModulesCore
-internal import React
 
 public class CameraPermissionRequester: NSObject, EXPermissionsRequester {
   static public func permissionType() -> String {
@@ -20,10 +19,6 @@ public class CameraPermissionRequester: NSObject, EXPermissionsRequester {
     var status: EXPermissionStatus
     let cameraUsageDescription = Bundle.main.object(forInfoDictionaryKey: "NSCameraUsageDescription")
     if cameraUsageDescription == nil {
-      RCTFatal(RCTErrorWithMessage("""
-      This app is missing 'NSCameraUsageDescription', video services will fail. \
-      Ensure this key exists in the app's Info.plist
-      """))
       systemStatus = AVAuthorizationStatus.denied
     } else {
       systemStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
